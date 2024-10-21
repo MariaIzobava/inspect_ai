@@ -91,6 +91,22 @@ class PlaywrightCrawler:
         self._nodes = {}
         self._dom_tree = None
 
+        def handle_new_page(page):
+            page.wait_for_load_state()
+            print('Got new page event')
+            print(page.title())
+            self._page = page
+
+            self._client = self._page.context.new_cdp_session(self._page)
+            self._client.send("Accessibility.enable")
+
+            # Start with an empty accessibility tree and DOM.
+            self._root = None
+            self._nodes = {}
+            self._dom_tree = None
+
+        self._context.on("page", handle_new_page)
+
     def lookup_node(
         self, node_id_or_tag: int | str, include_ignored: bool = False
     ) -> at.AccessibilityNode:
@@ -131,6 +147,9 @@ class PlaywrightCrawler:
     def update(self):
         """Updates the accessibility tree and DOM from current page."""
         # Wait for page to load.
+
+        # RESOLVE ALL on() calls on the context
+
         self._page.wait_for_load_state(WAIT_STRATEGY)
         time.sleep(WAIT_FOR_PAGE_TIME)
 

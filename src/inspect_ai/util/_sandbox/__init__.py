@@ -10,6 +10,7 @@ from .environment import (
     SandboxEnvironmentSpec,
     SandboxEnvironmentType,
 )
+from .gcp.gcp import GcpSandboxEnvironment  # noqa: F401
 from .limits import OutputLimitExceededError, SandboxEnvironmentLimits
 from .local import LocalSandboxEnvironment  # noqa: F401
 from .registry import sandboxenv
